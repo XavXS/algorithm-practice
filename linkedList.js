@@ -29,6 +29,7 @@ const LinkedList = () => {
     }
 
     const at = (index) => {
+        if(index < 0 || index >= _size) return null;
         let currentNode = head;
         for(let i=0; i<index; ++i) {
             if(!currentNode) break;
@@ -59,13 +60,15 @@ const LinkedList = () => {
             _size--;
             return;
         }
+        const temp = head;
         head = head.nextNode;
-        head.nextNode = null;
+        temp.nextNode = null;
+        _size--;
     }
 
     const find = (value) => {
         let currentNode = head;
-        for(let i=0; currentNode.nextNode; ++i) {
+        for(let i=0; currentNode; ++i) {
             if(currentNode.value === value) return i;
             currentNode = currentNode.nextNode;
         }
@@ -73,21 +76,26 @@ const LinkedList = () => {
     }
 
     const contains = (value) => {
-        if(find(value)) return true;
+        if(find(value) !== null) return true;
         return false;
     }
 
     const insertAt = (value, index) => {
-        if(index < 0 || index >= _size)
+        if(index < 0 || index > _size)
             throw 'index out of bounds';
         if(index === 0) {
-            prepend(new Node(value));
+            prepend(value);
+            return;
+        }
+        if(index === _size) {
+            append(value);
             return;
         }
         const prevNode = at(index-1);
-        const newNode = new Node(value);
+        const newNode = Node(value);
         newNode.nextNode = prevNode.nextNode;
         prevNode.nextNode = newNode;
+        _size++;
     }
 
     const removeAt = (index) => {
@@ -102,18 +110,19 @@ const LinkedList = () => {
             return;
         }
         const prevNode = at(index-1);
-        const indexNode = indexNode.nextNode;
+        const indexNode = prevNode.nextNode;
         prevNode.nextNode = indexNode.nextNode;
         indexNode.nextNode = null;
+        _size--;
     }
 
     const toString = () => {
         let result = '';
         let currentNode = head;
         if(head !== null)
-            while(currentNode.nextNode) {
+            while(currentNode) {
                 result += '( ' + currentNode.value + ' ) -> ';
-                currentNode = currentNode.nextNode();
+                currentNode = currentNode.nextNode;
             }
         result += 'null';
         return result;
