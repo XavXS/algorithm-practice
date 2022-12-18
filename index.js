@@ -29,39 +29,24 @@ function mergeSort(arr) {
     const a = mergeSort(arr.slice(0, mid));
     const b = mergeSort(arr.slice(mid, arr.length));
     const c = [];
-    for(let i=0, j=0; i<a.length || j<b.length;) {
-        if(j >= b.length) {
-            while(i < a.length) {
-                c.push(a[i]);
-                i++;
-            }
-        }
-        else if(i >= a.length) {
-            while(j < b.length) {
-                c.push(b[j]);
-                j++;
-            }
-        }
-        else if(a[i] < b[j]) {
-            while(i < a.length && a[i] < b[j]) {
-                c.push(a[i]);
-                i++;
-            }
-        }
-        else if(b[i] < a[i]) {
-            while(j < b.length && b[j] < a[i]) {
-                c.push(b[j])
-                j++;
-            }
+    let i = 0, j = 0;
+    while(i < a.length && j < b.length) {
+        if(a[i] < b[j]) {
+            c.push(a[i]);
+            i++;
         }
         else {
-            while(i < a.length && j < b.length && a[i] === b[j]) {
-                c.push(a[i]);
-                c.push(b[j]);
-                i++;
-                j++;
-            }
+            c.push(b[j]);
+            j++;
         }
+    }
+    while(i < a.length) {
+        c.push(a[i]);
+        i++;
+    }
+    while(j < b.length) {
+        c.push(b[j]);
+        j++;
     }
     return c;
 }
