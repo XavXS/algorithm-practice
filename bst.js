@@ -86,19 +86,37 @@ const Tree = (arr = []) => {
         leftHeight = height(rootNode.left);
         rightHeight = height(rootNode.right);
         if(leftHeight > rightHeight) return leftHeight + 1;
-        else return rightHeight + 1;
+        return rightHeight + 1;
     }
 
-    const levelOrderRec = (cb) => {
+    const depth = (node, current = root) => {
+        if(!current) return null;
+        if(node.value < current.value)
+            return depth(node, current.left) + 1;
+        else if(node.value > current.value)
+            return depth(node, current.right) + 1;
+        return 0;
+    }
+    
+    const isBalanced = () => {
+        lh = height(root.left);
+        rh = height(root.right);
+        return Math.abs(lh - rh) <= 1;
+    }
+
+    const rebalance = () => {
+        root = buildTree(preOrder());
+    }
+
+    const levelOrderRec = (cb = null) => {
         const arr = [];
         const h = height();
-        for(let i=0; i<h; ++i) {
+        for(let i=0; i<=h; ++i)
             processLevel(root, i);
-        }
 
         function processLevel(rootNode, h) {
             if(!rootNode) return;
-            if(h == 0) {
+            if(h === 0) {
                 if(!cb) arr.push(rootNode.value);
                 else cb(rootNode.value);
                 return;
@@ -107,6 +125,8 @@ const Tree = (arr = []) => {
                 processLevel(rootNode.right, h-1);
             }
         }
+
+        if(!cb) return arr;
     }
 
     const inOrder = (cb = null, rootNode = root, arr = []) => {
@@ -141,6 +161,9 @@ const Tree = (arr = []) => {
         find,
         insert,
         remove,
+        height,
+        isBalanced,
+        rebalance,
         levelOrder,
         levelOrderRec,
         inOrder,
@@ -163,3 +186,8 @@ let tree = Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324], '', false);
 prettyPrint(tree.root);
 tree.remove(67);
 prettyPrint(tree.root);
+console.log(tree.levelOrder())
+console.log(tree.levelOrderRec())
+console.log(tree.preOrder())
+console.log(tree.inOrder())
+console.log(tree.postOrder())
