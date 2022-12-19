@@ -10,9 +10,10 @@ const Node = (newValue = null) => {
 }
 
 const Tree = (arr = []) => {
-    arr.sort((a, b) => a - b);
     let root = buildTree([...new Set(arr)]);
+
     function buildTree(arr) {
+        arr.sort((a, b) => a - b);
         const midIndex = Math.floor(arr.length / 2)
         const mid = Node(arr[midIndex]);
         if(midIndex === 0) return mid;
@@ -97,15 +98,25 @@ const Tree = (arr = []) => {
             return depth(node, current.right) + 1;
         return 0;
     }
-    
+
     const isBalanced = () => {
-        lh = height(root.left);
-        rh = height(root.right);
-        return Math.abs(lh - rh) <= 1;
+        return balanceVal() !== -1;
+    }
+    
+    function balanceVal(rootNode = root) {
+        if(!rootNode) return 0;
+        const lh = balanceVal(rootNode.left);
+        if(lh === -1) return -1;
+        const rh = balanceVal(rootNode.right);
+        if(rh === -1) return -1;
+
+        if(Math.abs(lh - rh) > 1) return -1;
+        return (Math.max(lh, rh) + 1);
     }
 
     const rebalance = () => {
         root = buildTree(preOrder());
+        console.log(root.value);
     }
 
     const levelOrderRec = (cb = null) => {
@@ -141,7 +152,7 @@ const Tree = (arr = []) => {
     const preOrder = (cb = null, rootNode = root, arr = []) => {
         if(!rootNode) return;
         if(!cb) arr.push(rootNode.value);
-        else cb(rootNode.value);
+        else cb(rootNode);
         preOrder(cb, rootNode.left, arr);
         preOrder(cb, rootNode.right, arr);
         if(!cb) return arr;
@@ -156,8 +167,10 @@ const Tree = (arr = []) => {
         if(!cb) return arr;
     }
 
+    const getRoot = () => root;
+
     return {
-        root,
+        getRoot,
         find,
         insert,
         remove,
@@ -183,11 +196,16 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 }
 
 let tree = Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324], '', false);
-prettyPrint(tree.root);
-tree.remove(67);
-prettyPrint(tree.root);
-console.log(tree.levelOrder())
-console.log(tree.levelOrderRec())
-console.log(tree.preOrder())
-console.log(tree.inOrder())
-console.log(tree.postOrder())
+prettyPrint(tree.getRoot());
+console.log('balanced? ' + tree.isBalanced());
+tree.insert(9999);
+tree.insert(99999);
+tree.insert(999999);
+tree.insert(9999999);
+prettyPrint(tree.getRoot());
+console.log('balanced? ' + tree.isBalanced());
+console.log(tree.height());
+tree.rebalance();
+prettyPrint(tree.getRoot());
+console.log('balanced? ' + tree.isBalanced());
+console.log(tree.height());
